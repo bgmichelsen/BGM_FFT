@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio Version 17
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BGM_FFT_Demo - Standalone Plugin", "BGM_FFT_Demo_StandalonePlugin.vcxproj", "{F89502E2-F44B-852D-01B0-272C87BA11E7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BADE6213-F098-DAA6-D8B8-BEB4F3359447} = {BADE6213-F098-DAA6-D8B8-BEB4F3359447}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BGM_FFT_Demo - VST3", "BGM_FFT_Demo_VST3.vcxproj", "{B0534E55-52B5-F204-5AFC-5B4ACB482B8B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BADE6213-F098-DAA6-D8B8-BEB4F3359447} = {BADE6213-F098-DAA6-D8B8-BEB4F3359447}
+		{5F3A663C-5990-3F03-860A-29D105976C55} = {5F3A663C-5990-3F03-860A-29D105976C55}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BGM_FFT_Demo - Shared Code", "BGM_FFT_Demo_SharedCode.vcxproj", "{BADE6213-F098-DAA6-D8B8-BEB4F3359447}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BGM_FFT_Demo - VST3 Manifest Helper", "BGM_FFT_Demo_VST3ManifestHelper.vcxproj", "{5F3A663C-5990-3F03-860A-29D105976C55}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B0534E55-52B5-F204-5AFC-5B4ACB482B8B}.Debug|x64.ActiveCfg = Debug|x64
+		{B0534E55-52B5-F204-5AFC-5B4ACB482B8B}.Debug|x64.Build.0 = Debug|x64
+		{B0534E55-52B5-F204-5AFC-5B4ACB482B8B}.Release|x64.ActiveCfg = Release|x64
+		{B0534E55-52B5-F204-5AFC-5B4ACB482B8B}.Release|x64.Build.0 = Release|x64
+		{F89502E2-F44B-852D-01B0-272C87BA11E7}.Debug|x64.ActiveCfg = Debug|x64
+		{F89502E2-F44B-852D-01B0-272C87BA11E7}.Debug|x64.Build.0 = Debug|x64
+		{F89502E2-F44B-852D-01B0-272C87BA11E7}.Release|x64.ActiveCfg = Release|x64
+		{F89502E2-F44B-852D-01B0-272C87BA11E7}.Release|x64.Build.0 = Release|x64
+		{BADE6213-F098-DAA6-D8B8-BEB4F3359447}.Debug|x64.ActiveCfg = Debug|x64
+		{BADE6213-F098-DAA6-D8B8-BEB4F3359447}.Debug|x64.Build.0 = Debug|x64
+		{BADE6213-F098-DAA6-D8B8-BEB4F3359447}.Release|x64.ActiveCfg = Release|x64
+		{BADE6213-F098-DAA6-D8B8-BEB4F3359447}.Release|x64.Build.0 = Release|x64
+		{5F3A663C-5990-3F03-860A-29D105976C55}.Debug|x64.ActiveCfg = Debug|x64
+		{5F3A663C-5990-3F03-860A-29D105976C55}.Debug|x64.Build.0 = Debug|x64
+		{5F3A663C-5990-3F03-860A-29D105976C55}.Release|x64.ActiveCfg = Release|x64
+		{5F3A663C-5990-3F03-860A-29D105976C55}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
