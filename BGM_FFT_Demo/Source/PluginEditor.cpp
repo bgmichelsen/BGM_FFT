@@ -10,14 +10,18 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-BGM_FFT_DemoAudioProcessorEditor::BGM_FFT_DemoAudioProcessorEditor (BGM_FFT_DemoAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+BGM_FFT_DemoAudioProcessorEditor::BGM_FFT_DemoAudioProcessorEditor(BGM_FFT_DemoAudioProcessor& p)
+    : AudioProcessorEditor(&p),
+    audioProcessor(p),
+    top_panel(juce::Colours::darkslategrey),
+    bot_panel(juce::Colours::black)
 {
+    addAndMakeVisible(top_panel);
+    addAndMakeVisible(bot_panel);   
+
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
-
-    addAndMakeVisible(select);
+    setSize (600, 600);
 }
 
 BGM_FFT_DemoAudioProcessorEditor::~BGM_FFT_DemoAudioProcessorEditor()
@@ -33,22 +37,59 @@ void BGM_FFT_DemoAudioProcessorEditor::paint (juce::Graphics& g)
 
 void BGM_FFT_DemoAudioProcessorEditor::resized()
 {
-    juce::FlexBox fb_all;
-    juce::FlexBox fb_top;
-    juce::FlexBox fb_bot;
+    juce::FlexBox   fb;
 
-    fb_top.flexWrap = juce::FlexBox::Wrap::wrap;
-    fb_top.justifyContent = juce::FlexBox::JustifyContent::center;
-    fb_top.alignContent = juce::FlexBox::AlignContent::center;
-    fb_top.flexDirection = juce::FlexBox::Direction::row;
-    fb_top.items.add(juce::FlexItem(select).withMinHeight(15.0f).withMinWidth(20.0f).withFlex(1));
+    fb.flexWrap = juce::FlexBox::Wrap::wrap;
+    fb.flexDirection = juce::FlexBox::Direction::row;
+    fb.justifyContent = juce::FlexBox::JustifyContent::center;
 
-    fb_top.flexWrap = juce::FlexBox::Wrap::wrap;
-    fb_top.justifyContent = juce::FlexBox::JustifyContent::center;
-    fb_top.flexDirection = juce::FlexBox::Direction::row;
+    float height = (float)getHeight();
+    const float offset = height / 6.0f;
 
-    fb_all.flexDirection = juce::FlexBox::Direction::column;
-    fb_all.items.add(juce::FlexItem(fb_top).withFlex(2.5));
-    fb_all.items.add(juce::FlexItem(fb_bot).withFlex(2.5));
-    fb_all.performLayout(getLocalBounds());
+    juce::FlexItem top((float)getWidth(), offset, top_panel);
+    juce::FlexItem bot((float)getWidth(), height - offset, bot_panel);
+
+    fb.items.addArray({ top, bot });
+    fb.performLayout(getLocalBounds());
+}
+
+BGM_FFT_DemoAudioProcessorEditor::TopPanel::TopPanel(juce::Colour c)
+{
+    bgColor = c;
+    tog_label.setText("Use Juce FFT?:", juce::dontSendNotification);
+    tog_label.attachToComponent(&toggle, true);
+    addAndMakeVisible(toggle);
+    addAndMakeVisible(tog_label);
+}
+
+void BGM_FFT_DemoAudioProcessorEditor::TopPanel::paint(juce::Graphics& g)
+{
+    g.fillAll(bgColor);
+}
+
+void BGM_FFT_DemoAudioProcessorEditor::TopPanel::resized()
+{
+    toggle.setBounds((float)getWidth() / 2.0f, (float)getHeight() / 2.0f, 50, 50);
+}
+
+BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour c)
+{
+    bgColor = c;
+    addAndMakeVisible(toggle);
+}
+
+void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
+{
+    g.fillAll(bgColor);
+}
+
+void BGM_FFT_DemoAudioProcessorEditor::BotPanel::resized()
+{
+    juce::FlexBox fb;
+
+    fb.flexDirection = juce::FlexBox::Direction::row;
+    fb.flexWrap = juce::FlexBox::Wrap::wrap;
+    fb.justifyContent = juce::FlexBox::JustifyContent::center;
+    fb.items.add(juce::FlexItem(toggle).withFlex(2.5));
+    fb.performLayout(getLocalBounds());
 }

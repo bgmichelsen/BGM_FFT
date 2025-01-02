@@ -36,8 +36,22 @@ private:
         void resized() override;
 
         juce::Colour bgColor;
-
+        juce::ToggleButton toggle;
+        juce::Label tog_label;
     };
+
+    struct BotPanel : public Component
+    {
+        BotPanel(juce::Colour c);
+        void paint(juce::Graphics& g) override;
+        void resized() override;
+
+        juce::Colour bgColor;
+        juce::ToggleButton toggle;
+    };
+
+    TopPanel top_panel;
+    BotPanel bot_panel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BGM_FFT_DemoAudioProcessorEditor)
 };
