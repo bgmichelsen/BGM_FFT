@@ -11,6 +11,8 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
+#include "Graph.h"
+
 //==============================================================================
 /**
 */
@@ -47,7 +49,7 @@ private:
         void resized() override;
 
         juce::Colour bgColor;
-        juce::ToggleButton toggle;
+        BGM::Graph plot;
     };
 
     TopPanel top_panel;

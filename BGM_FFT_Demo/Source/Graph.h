@@ -18,7 +18,12 @@ namespace BGM
     {
     public:
         Graph(int x_range[2], int y_range[2], float width, float height);
+        Graph();
         ~Graph();
+
+        void setDomain(int x_min, int x_max);
+        void setRange(int y_min, int y_max);
+        void setBounds(float width, float height);
 
         void drawFrame(juce::Array<float>& data, juce::Graphics& g);
     private:

@@ -9,6 +9,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include "Graph.h"
+
 //==============================================================================
 BGM_FFT_DemoAudioProcessorEditor::BGM_FFT_DemoAudioProcessorEditor(BGM_FFT_DemoAudioProcessor& p)
     : AudioProcessorEditor(&p),
@@ -75,21 +77,24 @@ void BGM_FFT_DemoAudioProcessorEditor::TopPanel::resized()
 BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour c)
 {
     bgColor = c;
-    addAndMakeVisible(toggle);
+
+    plot.setDomain(0, 10);
+    plot.setRange(0, 20);
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
 {
+    juce::Array<float> data;
     g.fillAll(bgColor);
+
+    auto bounds = getLocalBounds();
+
+    plot.setBounds((float)bounds.getWidth(), (float)bounds.getHeight());
+    plot.drawFrame(data, g);
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::resized()
 {
-    juce::FlexBox fb;
-
-    fb.flexDirection = juce::FlexBox::Direction::row;
-    fb.flexWrap = juce::FlexBox::Wrap::wrap;
-    fb.justifyContent = juce::FlexBox::JustifyContent::center;
-    fb.items.add(juce::FlexItem(toggle).withFlex(2.5));
-    fb.performLayout(getLocalBounds());
+    /*plot.setBounds((float)getWidth(), (float)getHeight());
+    plot.drawFrame(data, g);*/
 }

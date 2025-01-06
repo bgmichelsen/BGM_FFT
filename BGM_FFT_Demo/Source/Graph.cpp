@@ -25,29 +25,47 @@ BGM::Graph::Graph(int x_range[2], int y_range[2], float width, float height)
     screen_height = height;
 }
 
+BGM::Graph::Graph()
+{
+
+}
+
 BGM::Graph::~Graph()
 {
 
 }
 
+void BGM::Graph::setDomain(int x_min, int x_max)
+{
+    min_x = x_min;
+    max_x = x_max;
+}
+
+void BGM::Graph::setRange(int y_min, int y_max)
+{
+    min_y = y_min;
+    max_y = y_max;
+}
+
+void BGM::Graph::setBounds(float width, float height)
+{
+    screen_width = width;
+    screen_height = height;
+}
+
 void BGM::Graph::drawFrame(juce::Array<float>& data, juce::Graphics& g)
 {
+    g.setColour(juce::Colours::white);
     drawAxes(g);
 }
 
 void BGM::Graph::drawAxes(juce::Graphics& g)
 {
     float x_start, y_start;
-    
-    if (min_y < 0.0f)
-        x_start = abs(min_y);
-    else
-        x_start = 0.0;
 
-    if (min_x < 0.0f)
-        y_start = abs(min_x);
-    else
-        y_start = screen_height;
+    x_start = juce::jmap<float>(0.0f, min_y, max_y, 0, screen_height);
+    y_start = juce::jmap<float>(0.0f, min_x, max_x, 0, screen_width);
+
 
     juce::Line<float> x_axis(juce::Point<float>(0.0f, x_start), juce::Point<float>(screen_width, x_start));
     juce::Line<float> y_axis(juce::Point<float>(y_start, 0.0f), juce::Point<float>(y_start, screen_height));
