@@ -12,20 +12,23 @@
 
 #include "JuceHeader.h"
 
+#include <vector>
+
 namespace BGM
 {
     class Graph
     {
     public:
-        Graph(int x_range[2], int y_range[2], float width, float height);
+        Graph(juce::Colour colour, int x_range[2], int y_range[2], float width, float height);
         Graph();
         ~Graph();
 
         void setDomain(int x_min, int x_max);
         void setRange(int y_min, int y_max);
         void setBounds(float width, float height);
+        void setColour(juce::Colour c);
 
-        void drawFrame(juce::Array<float>& data, juce::Graphics& g);
+        void drawFrame(std::vector<float> *const data, juce::Graphics& g);
     private:
         int domain;
         int range;
@@ -35,6 +38,8 @@ namespace BGM
         int max_y;
         float screen_width;
         float screen_height;
+
+        juce::Colour line_color;
 
         void drawAxes(juce::Graphics& g);
     };

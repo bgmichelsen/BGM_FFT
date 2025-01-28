@@ -11,12 +11,15 @@
 
 #include "Graph.h"
 
+#include <vector>
+
 //==============================================================================
 BGM_FFT_DemoAudioProcessorEditor::BGM_FFT_DemoAudioProcessorEditor(BGM_FFT_DemoAudioProcessor& p)
     : AudioProcessorEditor(&p),
     audioProcessor(p),
     top_panel(juce::Colours::darkslategrey),
-    bot_panel(juce::Colours::black)
+    bot_panel(juce::Colours::black, juce::Colours::red),
+    juceFFT(FFT_ORDER)
 {
     addAndMakeVisible(top_panel);
     addAndMakeVisible(bot_panel);   
@@ -35,6 +38,8 @@ void BGM_FFT_DemoAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+
+    bot_panel.setScopeData(&(getProcessor().getFifo()));
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::resized()
@@ -53,6 +58,11 @@ void BGM_FFT_DemoAudioProcessorEditor::resized()
 
     fb.items.addArray({ top, bot });
     fb.performLayout(getLocalBounds());
+}
+
+BGM_FFT_DemoAudioProcessor& BGM_FFT_DemoAudioProcessorEditor::getProcessor() const
+{
+    return static_cast<BGM_FFT_DemoAudioProcessor&>(processor);
 }
 
 BGM_FFT_DemoAudioProcessorEditor::TopPanel::TopPanel(juce::Colour c)
@@ -74,23 +84,31 @@ void BGM_FFT_DemoAudioProcessorEditor::TopPanel::resized()
     toggle.setBounds((float)getWidth() / 2.0f, (float)getHeight() / 2.0f, 50, 50);
 }
 
-BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour c)
+BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour bgc, juce::Colour lc)
 {
-    bgColor = c;
-
+    bgColor = bgc;
+    scopeData = nullptr;
     plot.setDomain(0, 10);
     plot.setRange(0, 20);
+    plot.setColour(lc);
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
 {
-    juce::Array<float> data;
     g.fillAll(bgColor);
 
     auto bounds = getLocalBounds();
 
     plot.setBounds((float)bounds.getWidth(), (float)bounds.getHeight());
-    plot.drawFrame(data, g);
+    if (nullptr != scopeData)
+    {
+        plot.drawFrame(scopeData, g);
+    }
+}
+
+void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setScopeData(std::vector<float> *const data)
+{
+    scopeData = data;
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::resized()

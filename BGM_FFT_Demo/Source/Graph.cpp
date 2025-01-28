@@ -10,7 +10,9 @@
 
 #include "Graph.h"
 
-BGM::Graph::Graph(int x_range[2], int y_range[2], float width, float height)
+#include <vector>
+
+BGM::Graph::Graph(juce::Colour color, int x_range[2], int y_range[2], float width, float height)
 {
     domain = abs(x_range[0]) + abs(x_range[1]);
     range = abs(y_range[0]) + abs(y_range[1]);
@@ -23,11 +25,25 @@ BGM::Graph::Graph(int x_range[2], int y_range[2], float width, float height)
 
     screen_width = width;
     screen_height = height;
+
+    line_color = color;
 }
 
 BGM::Graph::Graph()
 {
+    min_x = 0;
+    max_x = 10;
 
+    min_y = 0;
+    max_y = 10;
+
+    screen_width = 600;
+    screen_height = 400;
+
+    domain = 10;
+    range = 10;
+
+    line_color = juce::Colours::green;
 }
 
 BGM::Graph::~Graph()
@@ -53,10 +69,31 @@ void BGM::Graph::setBounds(float width, float height)
     screen_height = height;
 }
 
-void BGM::Graph::drawFrame(juce::Array<float>& data, juce::Graphics& g)
+void BGM::Graph::setColour(juce::Colour c)
 {
+    line_color = c;
+}
+
+void BGM::Graph::drawFrame(std::vector<float> *const data, juce::Graphics& g)
+{
+    std::vector<float>& data_r = *data;
+
     g.setColour(juce::Colours::white);
     drawAxes(g);
+
+    if (!data_r.empty())
+    {
+        g.setColour(line_color);
+        int data_len = data_r.size();
+        for (int i = 1; i < data_len; i++)
+        {
+            float x1 = (float)juce::jmap(i - 1, 0, data_len - 1, 0, (int)screen_width);
+            float y1 = (float)juce::jmap(data_r[i - 1], 0.0f, 1.0f, screen_height, 0.0f);
+            float x2 = (float)juce::jmap(i, 0, data_len - 1, 0, (int)screen_width);
+            float y2 = (float)juce::jmap(data_r[i], 0.0f, 1.0f, screen_height, 0.0f);
+            g.drawLine(x1, y1, x2, y2);
+        }
+    }
 }
 
 void BGM::Graph::drawAxes(juce::Graphics& g)
@@ -66,10 +103,16 @@ void BGM::Graph::drawAxes(juce::Graphics& g)
     x_start = juce::jmap<float>(0.0f, min_y, max_y, 0, screen_height);
     y_start = juce::jmap<float>(0.0f, min_x, max_x, 0, screen_width);
 
-
+    // Draw the axes
     juce::Line<float> x_axis(juce::Point<float>(0.0f, x_start), juce::Point<float>(screen_width, x_start));
     juce::Line<float> y_axis(juce::Point<float>(y_start, 0.0f), juce::Point<float>(y_start, screen_height));
 
     g.drawLine(x_axis);
     g.drawLine(y_axis);
+
+    // Draw the x tally marks
+
+
+    // Draw teh y tally marks
+
 }

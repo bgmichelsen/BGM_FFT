@@ -13,6 +13,9 @@
 
 #include "Graph.h"
 
+#include <vector>
+
+
 //==============================================================================
 /**
 */
@@ -25,6 +28,8 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+
+    BGM_FFT_DemoAudioProcessor& getProcessor() const;
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -44,16 +49,20 @@ private:
 
     struct BotPanel : public Component
     {
-        BotPanel(juce::Colour c);
+        BotPanel(juce::Colour bgc, juce::Colour lc);
         void paint(juce::Graphics& g) override;
         void resized() override;
+        void setScopeData(std::vector<float> *const data);
 
         juce::Colour bgColor;
         BGM::Graph plot;
+        std::vector<float>* scopeData;
     };
 
     TopPanel top_panel;
     BotPanel bot_panel;
+
+    juce::dsp::FFT juceFFT;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BGM_FFT_DemoAudioProcessorEditor)
 };

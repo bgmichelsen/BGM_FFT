@@ -10,6 +10,12 @@
 
 #include <JuceHeader.h>
 
+#include <vector>
+
+#define FFT_ORDER       11
+#define FFT_SIZE        (1 << FFT_ORDER)
+#define FRAME_SIZE      512
+
 //==============================================================================
 /**
 */
@@ -53,7 +59,13 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    std::vector<float>& getFifo();
+
 private:
+
+    //==============================================================================
+    std::vector<float> fifo;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BGM_FFT_DemoAudioProcessor)
 };

@@ -9,6 +9,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include <vector>
+
 //==============================================================================
 BGM_FFT_DemoAudioProcessor::BGM_FFT_DemoAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -93,8 +95,7 @@ void BGM_FFT_DemoAudioProcessor::changeProgramName (int index, const juce::Strin
 //==============================================================================
 void BGM_FFT_DemoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+
 }
 
 void BGM_FFT_DemoAudioProcessor::releaseResources()
@@ -152,9 +153,14 @@ void BGM_FFT_DemoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto* channelData = buffer.getWritePointer (channel);
+        auto* channelData = buffer.getWritePointer(channel);
 
-        // ..do something to the data...
+        for (int sample = 0; sample < buffer.getNumSamples(); sample++)
+        {
+            if (fifo.size() >= FFT_SIZE && !fifo.empty())
+                fifo.clear();
+            fifo.push_back(channelData[sample]);
+        }
     }
 }
 
@@ -188,4 +194,9 @@ void BGM_FFT_DemoAudioProcessor::setStateInformation (const void* data, int size
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new BGM_FFT_DemoAudioProcessor();
+}
+
+std::vector<float>& BGM_FFT_DemoAudioProcessor::getFifo()
+{
+    return fifo;
 }
