@@ -153,13 +153,22 @@ void BGM_FFT_DemoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto* channelData = buffer.getWritePointer(channel);
-
-        for (int sample = 0; sample < buffer.getNumSamples(); sample++)
+        if (channel == 0)
         {
-            if (fifo.size() >= FFT_SIZE && !fifo.empty())
-                fifo.clear();
-            fifo.push_back(channelData[sample]);
+            auto* channelData = buffer.getWritePointer(channel);
+
+            for (int sample = 0; sample < buffer.getNumSamples(); sample++)
+            {
+                if (fifo.size() >= FFT_SIZE && !fifo.empty())
+                    fifo.clear();
+                if (sample == 0)
+                    fifo.push_back(channelData[sample]);
+                else
+                {
+                    auto prev = fifo.back();
+                    fifo.push_back(prev + 0.01);
+                }
+            }
         }
     }
 }

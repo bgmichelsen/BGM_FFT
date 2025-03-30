@@ -88,8 +88,8 @@ BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour bgc, juce::Col
 {
     bgColor = bgc;
     scopeData = nullptr;
-    plot.setDomain(0, 10);
-    plot.setRange(0, 20);
+    plot.setDomain(0, FFT_SIZE);
+    plot.setRange(0, 1);
     plot.setColour(lc);
 }
 
