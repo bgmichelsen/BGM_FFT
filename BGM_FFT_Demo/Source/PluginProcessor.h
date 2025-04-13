@@ -15,6 +15,7 @@
 #define FFT_ORDER       11
 #define FFT_SIZE        (1 << FFT_ORDER)
 #define FRAME_SIZE      512
+#define PERIODIC_WINDOW (FFT_SIZE + 1)
 
 //==============================================================================
 /**

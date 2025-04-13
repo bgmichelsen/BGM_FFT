@@ -36,6 +36,7 @@ private:
     // access the processor object that created it.
     BGM_FFT_DemoAudioProcessor& audioProcessor;
 
+
     struct TopPanel : public Component
     {
         TopPanel(juce::Colour c);
@@ -53,16 +54,20 @@ private:
         void paint(juce::Graphics& g) override;
         void resized() override;
         void setScopeData(std::vector<float> *const data);
+        void setFFT_Data(std::vector<float>* const data);
 
         juce::Colour bgColor;
         BGM::Graph plot;
-        std::vector<float>* scopeData;
+        std::vector<float> scopeData;
+
+        juce::dsp::FFT juceFFT;
+        juce::dsp::WindowingFunction<float> window;
+
+        std::array<float, FFT_SIZE * 2> fftData;
     };
 
     TopPanel top_panel;
     BotPanel bot_panel;
-
-    juce::dsp::FFT juceFFT;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BGM_FFT_DemoAudioProcessorEditor)
 };

@@ -18,11 +18,10 @@ BGM_FFT_DemoAudioProcessorEditor::BGM_FFT_DemoAudioProcessorEditor(BGM_FFT_DemoA
     : AudioProcessorEditor(&p),
     audioProcessor(p),
     top_panel(juce::Colours::darkslategrey),
-    bot_panel(juce::Colours::black, juce::Colours::red),
-    juceFFT(FFT_ORDER)
+    bot_panel(juce::Colours::black, juce::Colours::red)
 {
     addAndMakeVisible(top_panel);
-    addAndMakeVisible(bot_panel);   
+    addAndMakeVisible(bot_panel);
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -39,7 +38,7 @@ void BGM_FFT_DemoAudioProcessorEditor::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 
-    bot_panel.setScopeData(&(getProcessor().getFifo()));
+    bot_panel.setFFT_Data(&(getProcessor().getFifo()));
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::resized()
@@ -84,10 +83,12 @@ void BGM_FFT_DemoAudioProcessorEditor::TopPanel::resized()
     toggle.setBounds((float)getWidth() / 2.0f, (float)getHeight() / 2.0f, 50, 50);
 }
 
-BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour bgc, juce::Colour lc)
+BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour bgc, juce::Colour lc) :
+    juceFFT(FFT_ORDER),
+    window(PERIODIC_WINDOW, juce::dsp::WindowingFunction<float>::WindowingMethod::hann, false)
 {
     bgColor = bgc;
-    scopeData = nullptr;
+    scopeData.clear();
     plot.setDomain(0, FFT_SIZE);
     plot.setRange(0, 1);
     plot.setColour(lc);
@@ -98,17 +99,38 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
     g.fillAll(bgColor);
 
     auto bounds = getLocalBounds();
+    float* fft_ptr = fftData.data();
+
+    // Get the windowed data
+    window.multiplyWithWindowingTable(fft_ptr, FFT_SIZE);
+
+    juceFFT.performRealOnlyForwardTransform(fft_ptr);
+
+    // FFT results are complex numbers, need to get magnitude and phase separately
+    for (int idx = 0; idx < FFT_SIZE; idx++)
+    {
+        std::complex<float> cmplx;
+        cmplx.real(fft_ptr[idx * 2]);
+        cmplx.imag(fft_ptr[idx * 2 + 1]);
+
+        // Get the magnitude and pass it to the scope data
+        scopeData.push_back(std::abs(cmplx));
+    }
 
     plot.setBounds((float)bounds.getWidth(), (float)bounds.getHeight());
-    if (nullptr != scopeData)
-    {
-        plot.drawFrame(scopeData, g);
-    }
+    plot.drawFrame(&scopeData, g);
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setScopeData(std::vector<float> *const data)
 {
-    scopeData = data;
+    scopeData.clear();
+    std::copy(data->begin(), data->end(), std::back_inserter(scopeData));
+}
+
+void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setFFT_Data(std::vector<float>* const data)
+{
+    fftData.empty();
+    std::copy_n(data->begin(), FFT_SIZE, fftData.begin());
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::resized()

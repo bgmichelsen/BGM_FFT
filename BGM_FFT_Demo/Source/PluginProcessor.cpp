@@ -95,7 +95,7 @@ void BGM_FFT_DemoAudioProcessor::changeProgramName (int index, const juce::Strin
 //==============================================================================
 void BGM_FFT_DemoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-
+    fifo.clear();
 }
 
 void BGM_FFT_DemoAudioProcessor::releaseResources()
