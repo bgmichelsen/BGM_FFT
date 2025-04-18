@@ -129,8 +129,10 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setScopeData(std::vector<float>
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setFFT_Data(std::vector<float>* const data)
 {
-    fftData.empty();
-    std::copy_n(data->begin(), FFT_SIZE, fftData.begin());
+    if (data->end() - data->begin() == FFT_SIZE)
+    {
+        std::copy_n(data->begin(), FFT_SIZE, fftData.begin());
+    }
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::resized()

@@ -17,9 +17,9 @@ BGM_FFT_DemoAudioProcessor::BGM_FFT_DemoAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                       .withInput  ("Input",  juce::AudioChannelSet::mono(), true)
                       #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                       .withOutput ("Output", juce::AudioChannelSet::mono(), true)
                      #endif
                        )
 #endif
@@ -145,31 +145,13 @@ void BGM_FFT_DemoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        if (channel == 0)
-        {
-            auto* channelData = buffer.getWritePointer(channel);
+    auto* channelData = buffer.getReadPointer(0);
 
-            for (int sample = 0; sample < buffer.getNumSamples(); sample++)
-            {
-                if (fifo.size() >= FFT_SIZE && !fifo.empty())
-                    fifo.clear();
-                if (sample == 0)
-                    fifo.push_back(channelData[sample]);
-                else
-                {
-                    auto prev = fifo.back();
-                    fifo.push_back(prev + 0.01);
-                }
-            }
-        }
+    for (int sample = 0; sample < buffer.getNumSamples(); sample++)
+    {
+        if (fifo.size() >= FFT_SIZE && !fifo.empty())
+            fifo.clear();
+        fifo.push_back(channelData[sample]);
     }
 }
 
