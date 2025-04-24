@@ -23,6 +23,8 @@ BGM_FFT_DemoAudioProcessorEditor::BGM_FFT_DemoAudioProcessorEditor(BGM_FFT_DemoA
     addAndMakeVisible(top_panel);
     addAndMakeVisible(bot_panel);
 
+    startTimerHz(30);
+
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (600, 600);
@@ -32,13 +34,23 @@ BGM_FFT_DemoAudioProcessorEditor::~BGM_FFT_DemoAudioProcessorEditor()
 {
 }
 
+void BGM_FFT_DemoAudioProcessorEditor::timerCallback()
+{
+    if (getProcessor().isBlockReady())
+    {
+        getProcessor().resetBlock();
+        repaint();
+    }
+}
+
 //==============================================================================
 void BGM_FFT_DemoAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 
-    bot_panel.setFFT_Data(&(getProcessor().getFifo()));
+    auto fifo = getProcessor().getFifo();
+    bot_panel.setFFT_Data(fifo.data(), fifo.size());
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::resized()
@@ -101,9 +113,10 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
     auto bounds = getLocalBounds();
     float* fft_ptr = fftData.data();
 
+    scopeData.clear();
+
     // Get the windowed data
     window.multiplyWithWindowingTable(fft_ptr, FFT_SIZE);
-
     juceFFT.performRealOnlyForwardTransform(fft_ptr);
 
     // FFT results are complex numbers, need to get magnitude and phase separately
@@ -114,7 +127,8 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
         cmplx.imag(fft_ptr[idx * 2 + 1]);
 
         // Get the magnitude and pass it to the scope data
-        scopeData.push_back(std::abs(cmplx));
+        float mag = std::abs(cmplx);
+        scopeData.push_back(std::abs(mag));
     }
 
     plot.setBounds((float)bounds.getWidth(), (float)bounds.getHeight());
@@ -127,11 +141,12 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setScopeData(std::vector<float>
     std::copy(data->begin(), data->end(), std::back_inserter(scopeData));
 }
 
-void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setFFT_Data(std::vector<float>* const data)
+void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setFFT_Data(float * const data, size_t size)
 {
-    if (data->end() - data->begin() == FFT_SIZE)
+    if (data != nullptr)
     {
-        std::copy_n(data->begin(), FFT_SIZE, fftData.begin());
+        fftData.fill(0.0f);
+        std::copy_n(data, size, fftData.begin());
     }
 }
 

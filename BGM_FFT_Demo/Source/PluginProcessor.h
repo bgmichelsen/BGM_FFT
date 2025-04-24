@@ -60,12 +60,18 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    std::vector<float>& getFifo();
+    std::array<float, FFT_SIZE>& getFifo();
+
+    bool isBlockReady();
+    void resetBlock();
 
 private:
 
     //==============================================================================
-    std::vector<float> fifo;
+    std::array<float, FFT_SIZE> fifo;
+    int fifoIdx;
+
+    bool blockReady;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BGM_FFT_DemoAudioProcessor)

@@ -95,7 +95,7 @@ void BGM_FFT_DemoAudioProcessor::changeProgramName (int index, const juce::Strin
 //==============================================================================
 void BGM_FFT_DemoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    fifo.clear();
+    fifo.fill(0.0f);
 }
 
 void BGM_FFT_DemoAudioProcessor::releaseResources()
@@ -150,8 +150,11 @@ void BGM_FFT_DemoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (int sample = 0; sample < buffer.getNumSamples(); sample++)
     {
         if (fifo.size() >= FFT_SIZE && !fifo.empty())
-            fifo.clear();
-        fifo.push_back(channelData[sample]);
+        {
+            blockReady = true;
+            fifoIdx = 0;
+        }
+        fifo[fifoIdx++] = channelData[sample];
     }
 }
 
@@ -187,7 +190,17 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new BGM_FFT_DemoAudioProcessor();
 }
 
-std::vector<float>& BGM_FFT_DemoAudioProcessor::getFifo()
+std::array<float, FFT_SIZE>& BGM_FFT_DemoAudioProcessor::getFifo()
 {
     return fifo;
+}
+
+bool BGM_FFT_DemoAudioProcessor::isBlockReady()
+{
+    return blockReady;
+}
+
+void BGM_FFT_DemoAudioProcessor::resetBlock()
+{
+    blockReady = false;
 }

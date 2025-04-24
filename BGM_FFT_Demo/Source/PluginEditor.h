@@ -19,7 +19,7 @@
 //==============================================================================
 /**
 */
-class BGM_FFT_DemoAudioProcessorEditor  : public juce::AudioProcessorEditor
+class BGM_FFT_DemoAudioProcessorEditor : public juce::AudioProcessorEditor, private juce::Timer
 {
 public:
     BGM_FFT_DemoAudioProcessorEditor (BGM_FFT_DemoAudioProcessor&);
@@ -30,6 +30,8 @@ public:
     void resized() override;
 
     BGM_FFT_DemoAudioProcessor& getProcessor() const;
+    
+    virtual void timerCallback() override;
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -54,7 +56,7 @@ private:
         void paint(juce::Graphics& g) override;
         void resized() override;
         void setScopeData(std::vector<float> *const data);
-        void setFFT_Data(std::vector<float>* const data);
+        void setFFT_Data(float* const data, size_t size);
 
         juce::Colour bgColor;
         BGM::Graph plot;
