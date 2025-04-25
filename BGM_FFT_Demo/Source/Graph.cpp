@@ -85,10 +85,10 @@ void BGM::Graph::drawFrame(std::vector<float> *const data, juce::Graphics& g)
         int data_len = data->size();
         for (int i = 1; i < data_len - 1; i++)
         {
-            float x1 = (float)juce::jmap(i - 1, 0, data_len - 1, 0, (int)screen_width);
-            float y1 = (float)juce::jmap((*data)[i - 1], 0.0f, 1.0f, screen_height, 0.0f);
-            float x2 = (float)juce::jmap(i, 0, data_len - 1, 0, (int)screen_width);
-            float y2 = (float)juce::jmap((*data)[i], 0.0f, 1.0f, screen_height, 0.0f);
+            float x1 = (float)juce::jmap(i - 1, min_x, max_x - 1, 0, (int)screen_width);
+            float y1 = (float)juce::jmap((*data)[i - 1], (float)min_y, (float)max_y, screen_height, 0.0f);
+            float x2 = (float)juce::jmap(i, min_x, max_x - 1, 0, (int)screen_width);
+            float y2 = (float)juce::jmap((*data)[i], (float)min_y, (float)max_y, screen_height, 0.0f);
             g.drawLine(x1, y1, x2, y2);
         }
     }

@@ -23,7 +23,7 @@ BGM_FFT_DemoAudioProcessorEditor::BGM_FFT_DemoAudioProcessorEditor(BGM_FFT_DemoA
     addAndMakeVisible(top_panel);
     addAndMakeVisible(bot_panel);
 
-    startTimerHz(30);
+    startTimerHz(60);
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -38,8 +38,8 @@ void BGM_FFT_DemoAudioProcessorEditor::timerCallback()
 {
     if (getProcessor().isBlockReady())
     {
-        getProcessor().resetBlock();
         repaint();
+        getProcessor().resetBlock();
     }
 }
 
@@ -48,9 +48,6 @@ void BGM_FFT_DemoAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    auto fifo = getProcessor().getFifo();
-    bot_panel.setFFT_Data(fifo.data(), fifo.size());
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::resized()
@@ -101,7 +98,7 @@ BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour bgc, juce::Col
 {
     bgColor = bgc;
     scopeData.clear();
-    plot.setDomain(0, FFT_SIZE);
+    plot.setDomain(0, FFT_SIZE / 2);
     plot.setRange(0, 1);
     plot.setColour(lc);
 }
@@ -117,10 +114,10 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
 
     // Get the windowed data
     window.multiplyWithWindowingTable(fft_ptr, FFT_SIZE);
-    juceFFT.performRealOnlyForwardTransform(fft_ptr);
+    juceFFT.performRealOnlyForwardTransform(fft_ptr, true);
 
     // FFT results are complex numbers, need to get magnitude and phase separately
-    for (int idx = 0; idx < FFT_SIZE; idx++)
+    for (int idx = 0; idx < FFT_SIZE / 2; idx++)
     {
         std::complex<float> cmplx;
         cmplx.real(fft_ptr[idx * 2]);
@@ -155,3 +152,14 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::resized()
     /*plot.setBounds((float)getWidth(), (float)getHeight());
     plot.drawFrame(data, g);*/
 }
+
+BGM_FFT_DemoAudioProcessorEditor::TopPanel& BGM_FFT_DemoAudioProcessorEditor::getTopPanel()
+{
+    return top_panel;
+}
+
+BGM_FFT_DemoAudioProcessorEditor::BotPanel& BGM_FFT_DemoAudioProcessorEditor::getBotPanel()
+{
+    return bot_panel;
+}
+

@@ -29,16 +29,6 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    BGM_FFT_DemoAudioProcessor& getProcessor() const;
-    
-    virtual void timerCallback() override;
-
-private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    BGM_FFT_DemoAudioProcessor& audioProcessor;
-
-
     struct TopPanel : public Component
     {
         TopPanel(juce::Colour c);
@@ -55,7 +45,7 @@ private:
         BotPanel(juce::Colour bgc, juce::Colour lc);
         void paint(juce::Graphics& g) override;
         void resized() override;
-        void setScopeData(std::vector<float> *const data);
+        void setScopeData(std::vector<float>* const data);
         void setFFT_Data(float* const data, size_t size);
 
         juce::Colour bgColor;
@@ -67,6 +57,18 @@ private:
 
         std::array<float, FFT_SIZE * 2> fftData;
     };
+
+    BGM_FFT_DemoAudioProcessor& getProcessor() const;
+    
+    virtual void timerCallback() override;
+
+    TopPanel& getTopPanel();
+    BotPanel& getBotPanel();
+
+private:
+    // This reference is provided as a quick way for your editor to
+    // access the processor object that created it.
+    BGM_FFT_DemoAudioProcessor& audioProcessor;
 
     TopPanel top_panel;
     BotPanel bot_panel;

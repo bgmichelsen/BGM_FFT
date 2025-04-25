@@ -96,6 +96,8 @@ void BGM_FFT_DemoAudioProcessor::changeProgramName (int index, const juce::Strin
 void BGM_FFT_DemoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     fifo.fill(0.0f);
+    fifoIdx = 0;
+    blockReady = false;
 }
 
 void BGM_FFT_DemoAudioProcessor::releaseResources()
@@ -149,9 +151,14 @@ void BGM_FFT_DemoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     for (int sample = 0; sample < buffer.getNumSamples(); sample++)
     {
-        if (fifo.size() >= FFT_SIZE && !fifo.empty())
+        if (fifoIdx >= FFT_SIZE)
         {
-            blockReady = true;
+            if (!blockReady)
+            {
+                auto *editor = dynamic_cast<BGM_FFT_DemoAudioProcessorEditor*>(getActiveEditor());
+                editor->getBotPanel().setFFT_Data(fifo.data(), fifo.size());
+                blockReady = true;
+            }
             fifoIdx = 0;
         }
         fifo[fifoIdx++] = channelData[sample];
