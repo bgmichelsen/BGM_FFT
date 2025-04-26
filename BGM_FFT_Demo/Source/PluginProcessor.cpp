@@ -156,8 +156,11 @@ void BGM_FFT_DemoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             if (!blockReady)
             {
                 auto *editor = dynamic_cast<BGM_FFT_DemoAudioProcessorEditor*>(getActiveEditor());
-                editor->getBotPanel().setFFT_Data(fifo.data(), fifo.size());
-                blockReady = true;
+                if (editor != nullptr)
+                {
+                    editor->getBotPanel().setFFT_Data(fifo.data(), fifo.size());
+                    blockReady = true;
+                }
             }
             fifoIdx = 0;
         }
