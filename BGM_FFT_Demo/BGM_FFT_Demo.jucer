@@ -4,6 +4,8 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginVST3Category="Analyzer">
   <MAINGROUP id="PNtZkN" name="BGM_FFT_Demo">
     <GROUP id="{962F2C89-0392-F8D3-E40D-DE3EFD4E3F26}" name="Source">
+      <FILE id="WNRtcF" name="BGM_FFT.cpp" compile="1" resource="0" file="Source/BGM_FFT.cpp"/>
+      <FILE id="yijhN6" name="BGM_FFT.h" compile="0" resource="0" file="Source/BGM_FFT.h"/>
       <FILE id="gb2qaX" name="Graph.h" compile="0" resource="0" file="Source/Graph.h"/>
       <FILE id="xyalcM" name="Graph.cpp" compile="1" resource="0" file="Source/Graph.cpp"/>
       <FILE id="j77q46" name="PluginProcessor.cpp" compile="1" resource="0"

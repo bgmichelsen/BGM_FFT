@@ -703,6 +703,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\BGM_FFT.cpp">
+      <Filter>BGM_FFT_Demo\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Graph.cpp">
       <Filter>BGM_FFT_Demo\Source</Filter>
     </ClCompile>
@@ -3582,6 +3585,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\BGM_FFT.h">
+      <Filter>BGM_FFT_Demo\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Graph.h">
       <Filter>BGM_FFT_Demo\Source</Filter>
     </ClInclude>

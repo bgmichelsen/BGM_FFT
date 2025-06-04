@@ -12,6 +12,7 @@
 #include "Graph.h"
 
 #include <vector>
+#include <algorithm>
 
 //==============================================================================
 BGM_FFT_DemoAudioProcessorEditor::BGM_FFT_DemoAudioProcessorEditor(BGM_FFT_DemoAudioProcessor& p)
@@ -38,6 +39,8 @@ void BGM_FFT_DemoAudioProcessorEditor::timerCallback()
 {
     if (getProcessor().isBlockReady())
     {
+        bool use_juce = top_panel.getToggleState();
+        bot_panel.useJuceFFT(use_juce);
         repaint();
         getProcessor().resetBlock();
     }
@@ -92,6 +95,11 @@ void BGM_FFT_DemoAudioProcessorEditor::TopPanel::resized()
     toggle.setBounds((float)getWidth() / 2.0f, (float)getHeight() / 2.0f, 50, 50);
 }
 
+bool BGM_FFT_DemoAudioProcessorEditor::TopPanel::getToggleState()
+{
+    return toggle.getToggleState();
+}
+
 BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour bgc, juce::Colour lc) :
     juceFFT(FFT_ORDER),
     window(PERIODIC_WINDOW, juce::dsp::WindowingFunction<float>::WindowingMethod::hann, false)
@@ -101,35 +109,48 @@ BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour bgc, juce::Col
     plot.setDomain(0, FFT_SIZE / 2);
     plot.setRange(0, 1);
     plot.setColour(lc);
+    useJuce = false;
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
 {
-    g.fillAll(bgColor);
-
-    auto bounds = getLocalBounds();
-    float* fft_ptr = fftData.data();
-
-    scopeData.clear();
-
-    // Get the windowed data
-    window.multiplyWithWindowingTable(fft_ptr, FFT_SIZE);
-    juceFFT.performRealOnlyForwardTransform(fft_ptr, true);
-
-    // FFT results are complex numbers, need to get magnitude and phase separately
-    for (int idx = 0; idx < FFT_SIZE / 2; idx++)
+    if (!std::all_of(fftData.begin(), fftData.end(), [](float x) { return x == 0.0f; }))
     {
-        std::complex<float> cmplx;
-        cmplx.real(fft_ptr[idx * 2]);
-        cmplx.imag(fft_ptr[idx * 2 + 1]);
+        g.fillAll(bgColor);
 
-        // Get the magnitude and pass it to the scope data
-        float mag = std::abs(cmplx);
-        scopeData.push_back(std::abs(mag));
+        auto bounds = getLocalBounds();
+        float* fft_ptr = fftData.data();
+
+        scopeData.clear();
+
+        // Get the windowed data
+        window.multiplyWithWindowingTable(fft_ptr, FFT_SIZE);
+
+        // Perform the FFT
+        if (useJuce)
+        {
+            juceFFT.performRealOnlyForwardTransform(fft_ptr, true);
+        }
+        else
+        {
+            bgmFFT.forwardTransform(fft_ptr, (FFT_SIZE * 2));
+        }
+
+        // FFT results are complex numbers, need to get magnitude and phase separately
+        for (int idx = 0; idx < FFT_SIZE / 2; idx++)
+        {
+            std::complex<float> cmplx;
+            cmplx.real(fft_ptr[idx * 2]);
+            cmplx.imag(fft_ptr[idx * 2 + 1]);
+
+            // Get the magnitude and pass it to the scope data
+            float mag = std::abs(cmplx);
+            scopeData.push_back(std::abs(mag));
+        }
+
+        plot.setBounds((float)bounds.getWidth(), (float)bounds.getHeight());
+        plot.drawFrame(&scopeData, g);
     }
-
-    plot.setBounds((float)bounds.getWidth(), (float)bounds.getHeight());
-    plot.drawFrame(&scopeData, g);
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setScopeData(std::vector<float> *const data)
@@ -151,6 +172,11 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::resized()
 {
     /*plot.setBounds((float)getWidth(), (float)getHeight());
     plot.drawFrame(data, g);*/
+}
+
+void BGM_FFT_DemoAudioProcessorEditor::BotPanel::useJuceFFT(bool flag)
+{
+    useJuce = flag;
 }
 
 BGM_FFT_DemoAudioProcessorEditor::TopPanel& BGM_FFT_DemoAudioProcessorEditor::getTopPanel()

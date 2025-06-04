@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 
 #include "Graph.h"
+#include "BGM_FFT.h"
 
 #include <vector>
 
@@ -34,6 +35,7 @@ public:
         TopPanel(juce::Colour c);
         void paint(juce::Graphics& g) override;
         void resized() override;
+        bool getToggleState();
 
         juce::Colour bgColor;
         juce::ToggleButton toggle;
@@ -47,15 +49,19 @@ public:
         void resized() override;
         void setScopeData(std::vector<float>* const data);
         void setFFT_Data(float* const data, size_t size);
+        void useJuceFFT(bool flag);
 
         juce::Colour bgColor;
         BGM::Graph plot;
         std::vector<float> scopeData;
 
         juce::dsp::FFT juceFFT;
+        BGM::FFT bgmFFT;
         juce::dsp::WindowingFunction<float> window;
 
         std::array<float, FFT_SIZE * 2> fftData;
+
+        bool useJuce;
     };
 
     BGM_FFT_DemoAudioProcessor& getProcessor() const;
