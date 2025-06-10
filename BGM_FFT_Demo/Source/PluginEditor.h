@@ -47,13 +47,13 @@ public:
         BotPanel(juce::Colour bgc, juce::Colour lc);
         void paint(juce::Graphics& g) override;
         void resized() override;
-        void setScopeData(std::vector<float>* const data);
+        void setScopeData(float* const data, size_t size);
         void setFFT_Data(float* const data, size_t size);
         void useJuceFFT(bool flag);
 
         juce::Colour bgColor;
         BGM::Graph plot;
-        std::vector<float> scopeData;
+        std::array<float, FFT_SIZE / 2> scopeData;
 
         juce::dsp::FFT juceFFT;
         BGM::FFT bgmFFT;

@@ -151,20 +151,21 @@ void BGM_FFT_DemoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     for (int sample = 0; sample < buffer.getNumSamples(); sample++)
     {
-        if (fifoIdx >= FFT_SIZE)
+        if (fifoIdx >= FFT_SIZE && !blockReady)
         {
-            if (!blockReady)
+            auto *editor = dynamic_cast<BGM_FFT_DemoAudioProcessorEditor*>(getActiveEditor());
+            if (editor != nullptr)
             {
-                auto *editor = dynamic_cast<BGM_FFT_DemoAudioProcessorEditor*>(getActiveEditor());
-                if (editor != nullptr)
-                {
-                    editor->getBotPanel().setFFT_Data(fifo.data(), fifo.size());
-                    blockReady = true;
-                }
+                editor->getBotPanel().setFFT_Data(fifo.data(), fifo.size());
+                blockReady = true;
             }
             fifoIdx = 0;
         }
-        fifo[fifoIdx++] = channelData[sample];
+
+        if (!blockReady)
+        {
+            fifo[fifoIdx++] = channelData[sample];
+        }
     }
 }
 

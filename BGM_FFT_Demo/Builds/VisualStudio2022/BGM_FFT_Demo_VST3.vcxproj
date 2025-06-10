@@ -84,8 +84,7 @@
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalDependencies>BGM_FFT_Demo.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <HeapReserveSize>
-      </HeapReserveSize>
+      <HeapReserveSize>2000000</HeapReserveSize>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>

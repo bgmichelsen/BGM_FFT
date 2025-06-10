@@ -74,21 +74,21 @@ void BGM::Graph::setColour(juce::Colour c)
     line_color = c;
 }
 
-void BGM::Graph::drawFrame(std::vector<float> *const data, juce::Graphics& g)
+void BGM::Graph::drawFrame(float *const data, size_t size, juce::Graphics& g)
 {
     g.setColour(juce::Colours::white);
     drawAxes(g);
 
-    if (!data->empty())
+    if (data != nullptr && size > 0)
     {
         g.setColour(line_color);
-        int data_len = data->size();
+        int data_len = size;
         for (int i = 1; i < data_len - 1; i++)
         {
             float x1 = (float)juce::jmap(i - 1, min_x, max_x - 1, 0, (int)screen_width);
-            float y1 = (float)juce::jmap((*data)[i - 1], (float)min_y, (float)max_y, screen_height, 0.0f);
+            float y1 = (float)juce::jmap(data[i - 1], (float)min_y, (float)max_y, screen_height, 0.0f);
             float x2 = (float)juce::jmap(i, min_x, max_x - 1, 0, (int)screen_width);
-            float y2 = (float)juce::jmap((*data)[i], (float)min_y, (float)max_y, screen_height, 0.0f);
+            float y2 = (float)juce::jmap(data[i], (float)min_y, (float)max_y, screen_height, 0.0f);
             g.drawLine(x1, y1, x2, y2);
         }
     }

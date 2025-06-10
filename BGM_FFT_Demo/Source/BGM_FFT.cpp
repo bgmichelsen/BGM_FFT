@@ -24,7 +24,7 @@ BGM::FFT::FFT()
 void BGM::FFT::forwardTransform(float *const data, size_t size)
 {
     constexpr double PI = 3.14159265;
-    size_t N = (size / 2);
+    size_t N = (size);
     int M = (std::log(N) / std::log(2));
 
     float *re = new float[N];
@@ -68,7 +68,7 @@ void BGM::FFT::forwardTransform(float *const data, size_t size)
     }
 
     // Set the new data
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < (N / 2); i++)
     {
         data[i * 2] = re[i];
         data[i * 2 + 1] = im[i];

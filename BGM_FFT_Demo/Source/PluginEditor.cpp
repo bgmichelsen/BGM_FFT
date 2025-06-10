@@ -105,7 +105,7 @@ BGM_FFT_DemoAudioProcessorEditor::BotPanel::BotPanel(juce::Colour bgc, juce::Col
     window(PERIODIC_WINDOW, juce::dsp::WindowingFunction<float>::WindowingMethod::hann, false)
 {
     bgColor = bgc;
-    scopeData.clear();
+    scopeData.fill(0.0f);
     plot.setDomain(0, FFT_SIZE / 2);
     plot.setRange(0, 1);
     plot.setColour(lc);
@@ -120,8 +120,6 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
 
         auto bounds = getLocalBounds();
         float* fft_ptr = fftData.data();
-
-        scopeData.clear();
 
         // Get the windowed data
         window.multiplyWithWindowingTable(fft_ptr, FFT_SIZE);
@@ -145,18 +143,21 @@ void BGM_FFT_DemoAudioProcessorEditor::BotPanel::paint(juce::Graphics& g)
 
             // Get the magnitude and pass it to the scope data
             float mag = std::abs(cmplx);
-            scopeData.push_back(std::abs(mag));
+            scopeData[idx] = (std::abs(mag));
         }
 
         plot.setBounds((float)bounds.getWidth(), (float)bounds.getHeight());
-        plot.drawFrame(&scopeData, g);
+        plot.drawFrame(scopeData.data(), scopeData.size(), g);
     }
 }
 
-void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setScopeData(std::vector<float> *const data)
+void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setScopeData(float *const data, size_t size)
 {
-    scopeData.clear();
-    std::copy(data->begin(), data->end(), std::back_inserter(scopeData));
+    if (data != nullptr)
+    {
+        scopeData.fill(0.0f);
+        std::copy_n(data, size, scopeData.begin());
+    }
 }
 
 void BGM_FFT_DemoAudioProcessorEditor::BotPanel::setFFT_Data(float * const data, size_t size)

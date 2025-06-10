@@ -28,7 +28,7 @@ namespace BGM
         void setBounds(float width, float height);
         void setColour(juce::Colour c);
 
-        void drawFrame(std::vector<float> *const data, juce::Graphics& g);
+        void drawFrame(float *const data, size_t size, juce::Graphics& g);
     private:
         int domain;
         int range;
